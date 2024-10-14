@@ -665,11 +665,11 @@ macro(CheckWayland)
           set(SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC_CURSOR "\"${WAYLAND_CURSOR_LIB_SONAME}\"")
           set(SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC_XKBCOMMON "\"${XKBCOMMON_LIB_SONAME}\"")
           set(HAVE_WAYLAND_SHARED TRUE)
-          # workaround, add wayland-client for the moment
+          # Urho3D - workaround, add wayland-client for the moment
           list (APPEND EXTRA_LIBS wayland-client)
         endif()
       else()
-        # add all wayland dependencies
+        # Urho3D - add all wayland dependencies
         list (APPEND EXTRA_LIBS xkbcommon wayland-client wayland-egl wayland-cursor)
       endif()
 

@@ -1092,12 +1092,13 @@ elseif(UNIX)    # Urho3D - at this point both UNIX and UNIX_SYS should be equiva
   set(SOURCE_FILES ${SOURCE_FILES} ${CORE_UNIX_SOURCES})
 
   if(LINUX)
+    # Urho3D - bug fix int return main
     check_c_source_compiles("
         #include <linux/input.h>
         #ifndef EVIOCGNAME
         #error EVIOCGNAME() ioctl not available
         #endif
-        int main(int argc, char** argv) {}" HAVE_INPUT_EVENTS)
+        int main(int argc, char** argv) { return 0; }" HAVE_INPUT_EVENTS)
 
     check_c_source_compiles("
         #include <linux/kd.h>
@@ -1108,6 +1109,7 @@ elseif(UNIX)    # Urho3D - at this point both UNIX and UNIX_SYS should be equiva
             struct kbentry kbe;
             kbe.kb_table = KG_CTRL;
             ioctl(0, KDGKBENT, &kbe);
+            return 0;
         }" HAVE_INPUT_KD)
 
     file(GLOB CORE_LINUX_SOURCES ${SDL2_SOURCE_DIR}/src/core/linux/*.c)
