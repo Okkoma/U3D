@@ -25,7 +25,8 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id("com.android.library")
-    id("com.jfrog.bintray")
+// bintray to remove : see https://plugins.gradle.org/docs/bintray
+//   id("com.jfrog.bintray")
     kotlin("android")
     kotlin("android.extensions")
     `maven-publish`
@@ -173,6 +174,8 @@ publishing {
     }
 }
 
+// bintray to remove : see https://plugins.gradle.org/docs/bintray
+/*
 bintray {
     user = System.getenv("BINTRAY_USER")
     key = System.getenv("BINTRAY_KEY")
@@ -197,6 +200,7 @@ bintray {
         }
     }
 }
+*/
 
 fun MavenPublication.configure(config: String) {
     val libType = System.getenv("URHO3D_LIB_TYPE")?.toLowerCase() ?: "static"

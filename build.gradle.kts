@@ -28,7 +28,7 @@ buildscript {
     val kotlinVersion: String by extra
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.0.2")
@@ -36,9 +36,11 @@ buildscript {
     }
 }
 
+/*
 plugins {
     id("com.jfrog.bintray") version "1.8.5" apply false
 }
+*/
 
 val kotlinVersion: String by ext
 
@@ -51,7 +53,8 @@ allprojects {
     """.trimIndent().replace('\n', ' ')
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        mavenLocal()
     }
     buildscript {
         ext {
