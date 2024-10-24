@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2008-2022 the Urho3D project.
+# Copyright (c) 2022-2024 the U3D project.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -617,14 +618,16 @@ def root_build_gradle_kts(_)
   template = File.readlines('build.gradle.kts')
   <<-EOF
 buildscript {
+    extra["agpVersion"] = "#{first_match(/extra\["agpVersion"\] = "(.+)"/, template)}"
     extra["kotlinVersion"] = "#{first_match(/extra\["kotlinVersion"\] = "(.+)"/, template)}"
+    val agpVersion: String by extra
     val kotlinVersion: String by extra
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:#{first_match(/"com.android.tools.build:gradle:(.+)"/, template)}")
+        classpath("com.android.tools.build:gradle:$agpVersion")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
@@ -634,7 +637,7 @@ val kotlinVersion: String by ext
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         // Remove below two repos if you are only using released AAR from JCenter
         mavenLocal()
         if (System.getenv("GITHUB_ACTOR") != null && System.getenv("GITHUB_TOKEN") != null) {

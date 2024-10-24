@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
 # Copyright (c) 2008-2022 the Urho3D project.
+# Copyright (c) 2022-2024 the U3D project.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -62,10 +63,15 @@ fi
 
 platform=$1; shift
 
-if [[ "$DBE_NAMING_SCHEME" == "tag" ]]; then
-  dbe_image=$DBE_NAME:$DBE_TAG-$platform
+# temporary workaround for testing
+if [[ "$platform" == "android" ]]; then
+    dbe_image="okkoman/u3d-android:latest"
 else
-  dbe_image=$DBE_NAME-$platform:$DBE_TAG
+    if [[ "$DBE_NAMING_SCHEME" == "tag" ]]; then
+      dbe_image=$DBE_NAME:$DBE_TAG-$platform
+    else
+      dbe_image=$DBE_NAME-$platform:$DBE_TAG
+    fi
 fi
 
 if [[ $DBE_REFRESH == 1 ]]; then

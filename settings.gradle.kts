@@ -20,4 +20,7 @@
 // THE SOFTWARE.
 //
 
-include(":android:urho3d-lib", ":android:launcher-app")
+rootProject.name = "U3D"
+
+include(":android:urho3d-lib")
+include(":android:launcher-app")
