@@ -1,0 +1,21 @@
+services:
+  windows:
+    image: dockurr/windows
+    container_name: u3d-win
+    environment:
+      VERSION: "win11"
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+    devices:
+      - /dev/kvm
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    stop_grace_period: 2m
+    volumes:
+      - /media/DATA/OS/Windows/Win11_23H2_French_x64v2.iso:/custom.iso
+      - ./scripts:/oem
+      - /media/DATA/Dev/U3D:/data
