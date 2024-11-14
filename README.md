@@ -8,11 +8,12 @@
 </a>
 
 # U3D
-[![android](https://github.com/u3d-community/U3D/actions/workflows/android.yml/badge.svg?branch=master)](https://github.com/u3d-community/U3D/actions/workflows/android.yml)
-[![ios](https://github.com/u3d-community/U3D/actions/workflows/ios.yml/badge.svg?branch=master)](https://github.com/u3d-community/U3D/actions/workflows/ios.yml)
-[![linux](https://github.com/u3d-community/U3D/actions/workflows/linux.yml/badge.svg?branch=master)](https://github.com/u3d-community/U3D/actions/workflows/linux.yml)
-[![macos](https://github.com/u3d-community/U3D/actions/workflows/macos.yml/badge.svg?branch=master)](https://github.com/u3d-community/U3D/actions/workflows/macos.yml)
-[![windows](https://github.com/u3d-community/U3D/actions/workflows/windows.yml/badge.svg?branch=master)](https://github.com/u3d-community/U3D/actions/workflows/windows.yml)
+[![android](../../actions/workflows/android.yml/badge.svg?branch=sdl2.30)](../../actions/workflows/android.yml)
+[![ios](../../actions/workflows/ios.yml/badge.svg?branch=sdl2.30)](../../actions/workflows/ios.yml)
+[![linux](../../actions/workflows/linux.yml/badge.svg?branch=sdl2.30)](../../actions/workflows/linux.yml)
+[![macos](../../actions/workflows/macos.yml/badge.svg?branch=sdl2.30)](../../actions/workflows/macos.yml)
+[![windows](../../actions/workflows/windows.yml/badge.svg?branch=sdl2.30)](../../actions/workflows/windows.yml)
+[![web](../../actions/workflows/web.yml/badge.svg?branch=sdl2.30)](../../actions/workflows/web.yml)
 ![GitHub](https://img.shields.io/github/license/u3d-community/U3D)
 [![Discord](https://img.shields.io/discord/1044444861992026192)](https://discord.gg/httHCqcXGx)
 </div>
