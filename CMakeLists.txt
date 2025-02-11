@@ -72,16 +72,18 @@ set (DEST_BUNDLE_DIR ${DEST_SHARE_DIR}/Applications)
 # Note to package maintainer: ${PATH_SUFFIX} for library could be removed if the extra path is not desired, but if so then the RPATH setting in Source's CMakeLists.txt needs to be adjusted accordingly
 set (DEST_LIBRARY_DIR ${CURRENT_INSTALL_PREFIX}lib${LIB_SUFFIX}/${PATH_SUFFIX})
 set (DEST_PKGCONFIG_DIR ${CURRENT_INSTALL_PREFIX}lib${LIB_SUFFIX}/pkgconfig)
-# Install application launcher scripts
-# TODO : do we need install application scripts in urho3d sdk ? this part should be in user project cmakefiles
-#file (GLOB APP_SCRIPTS ${CMAKE_SOURCE_DIR}/bin/*${SCRIPT_EXT})
-#install (PROGRAMS ${APP_SCRIPTS} DESTINATION ${DEST_RUNTIME_DIR})   # DEST_RUNTIME_DIR variable is set by the set_output_directories() macro call in the UrhoCommon module
-# Install CMake modules and toolchains provided by and for Urho3D
-install (DIRECTORY ${URHO3D_ROOT_DIR}/cmake/ DESTINATION ${DEST_SHARE_DIR}/cmake)    # Note: the trailing slash is significant
-# Install CMake build scripts and rakefile
-file (GLOB CMAKE_SCRIPTS ${URHO3D_ROOT_DIR}/script/*${SCRIPT_EXT})
-install (PROGRAMS ${CMAKE_SCRIPTS} DESTINATION ${DEST_SHARE_DIR}/scripts)
-install (FILES rakefile DESTINATION ${DEST_SHARE_DIR})
+if (NOT URHO3D_SKIP_INSTALL) # Disable install option for urho3D as a submodule
+    # Install application launcher scripts
+    # TODO : do we need install application scripts in urho3d sdk ? this part should be in user project cmakefiles
+    #file (GLOB APP_SCRIPTS ${CMAKE_SOURCE_DIR}/bin/*${SCRIPT_EXT})
+    #install (PROGRAMS ${APP_SCRIPTS} DESTINATION ${DEST_RUNTIME_DIR})   # DEST_RUNTIME_DIR variable is set by the set_output_directories() macro call in the UrhoCommon module
+    # Install CMake modules and toolchains provided by and for Urho3D
+    install (DIRECTORY ${URHO3D_ROOT_DIR}/cmake/ DESTINATION ${DEST_SHARE_DIR}/cmake)    # Note: the trailing slash is significant
+    # Install CMake build scripts and rakefile
+    file (GLOB CMAKE_SCRIPTS ${URHO3D_ROOT_DIR}/script/*${SCRIPT_EXT})
+    install (PROGRAMS ${CMAKE_SCRIPTS} DESTINATION ${DEST_SHARE_DIR}/scripts)
+    install (FILES rakefile DESTINATION ${DEST_SHARE_DIR})
+endif ()
 
 # Setup package variables
 set (URHO3D_DESCRIPTION "Urho3D is a free lightweight, cross-platform 2D and 3D game engine implemented in C++ and released under the MIT license. Greatly inspired by OGRE (http://www.ogre3d.org) and Horde3D (http://www.horde3d.org).")
