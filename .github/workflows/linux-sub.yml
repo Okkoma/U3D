@@ -1,0 +1,70 @@
+name: Linux as submodule Build
+on: [push, pull_request]
+
+concurrency:
+  group: ci-${{github.actor}}-${{github.head_ref || github.run_number}}-${{github.ref}}-linux-sub
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: 🐧submodule
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux-clang
+        lib-type:
+          - static
+        architecture:
+          - 64
+        build-type:
+          - rel
+    env:
+      HOST: ${{ github.job }}
+      PLATFORM: ${{ matrix.platform }}
+      BUILD_TYPE: ${{ matrix.build-type }}
+      LIB_TYPE: ${{ matrix.lib-type }}
+      ARCH: ${{ matrix.architecture }}
+      DBE_TAG: linux-sub
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Source checksum
+        id: source_checksum
+        run: rake source_checksum
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/cache/.ccache
+            build/cache/.gradle/caches
+            build/cache/.gradle/wrapper
+          key: |
+            ${{ matrix.platform }}-${{ matrix.lib-type }}-${{ matrix.architecture }}-${{ matrix.build-type }}-${{ env.DBE_TAG }}-${{ steps.source_checksum.outputs.hexdigest }}
+          restore-keys: |
+            ${{ matrix.platform }}-${{ matrix.lib-type }}-${{ matrix.architecture }}-${{ matrix.build-type }}-${{ env.DBE_TAG }}
+            ${{ matrix.platform }}-${{ matrix.lib-type }}-${{ matrix.architecture }}-${{ matrix.build-type }}            
+      - name: Setup Build Environnement Linux
+        run: |
+            sudo apt update
+            sudo apt install -y --no-install-recommends libglu1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev
+            sudo apt install -y --no-install-recommends libxrandr-dev libxrender-dev libxss-dev libxxf86vm-dev
+            sudo apt install -y --no-install-recommends libasound2-dev libpulse-dev libibus-1.0-dev
+            sudo apt install -y --no-install-recommends libdbus-1-dev libreadline6-dev libssl-dev libudev-dev            
+      - name: SubModule - New Project
+        run: |
+            rake new
+            cd /home/runner/projects/UrhoApp
+            mkdir vendor
+            git init
+            git submodule add https://github.com/Okkoma/U3D.git vendor/U3D
+      - name: SubModule - CMake
+        run: |
+            cd /home/runner/projects/UrhoApp
+            cmake -S . -B build -DURHO3D_SAMPLES=0 -DURHO3D_TOOLS=0
+      - name: SubModule - Build
+        run: |
+            cd /home/runner/projects/UrhoApp
+            cmake --build build
