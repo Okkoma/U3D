@@ -1421,6 +1421,21 @@
 #endif
 
 
+// Urho3D: At now, Computed gotos table don't work (tested on gcc 11.4)
+#define URH3D_AS_DISABLE_COMPUTED_GOTOS
+// Urho3D: use Default constructor logic from AngelScript < 2.38
+#define URHO3D_AS_PREVIOUS_DEFAULT_CONSTRUCTOR_LOGIC
+// Urho3D: need explicit handle ability
+#define URHO3D_AS_ADD_EXPLICIT_HANDLE
+
+#ifdef URH3D_AS_DISABLE_COMPUTED_GOTOS
+#ifdef AS_USE_COMPUTED_GOTOS
+    #undef AS_USE_COMPUTED_GOTOS
+#endif
+#define AS_USE_COMPUTED_GOTOS 0
+#endif
+
+
 
 //
 // Internal defines (do not change these)

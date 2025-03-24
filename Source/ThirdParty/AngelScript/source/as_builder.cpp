@@ -28,6 +28,7 @@
    andreas@angelcode.com
 */
 
+// Modified for Urho3D
 
 //
 // as_builder.cpp
@@ -753,6 +754,42 @@ void asCBuilder::ParseScripts()
 				node = next;
 			}
 
+#ifdef URHO3D_AS_PREVIOUS_DEFAULT_CONSTRUCTOR_LOGIC
+// 2.35 CODE ...
+			// Make sure the default factory & constructor exists for classes
+			asCObjectType *ot = CastToObjectType(decl->typeInfo);
+			if( ot->beh.construct == engine->scriptTypeBehaviours.beh.construct )
+			{
+				if( ot->beh.constructors.GetLength() == 1 || engine->ep.alwaysImplDefaultConstruct )
+				{
+					AddDefaultConstructor(ot, decl->script);
+				}
+				else
+				{
+					// As the class has another constructor we shouldn't provide the default constructor
+					if( ot->beh.construct )
+					{
+						engine->scriptFunctions[ot->beh.construct]->ReleaseInternal();
+						ot->beh.construct = 0;
+						ot->beh.constructors.RemoveIndex(0);
+					}
+					if( ot->beh.factory )
+					{
+						engine->scriptFunctions[ot->beh.factory]->ReleaseInternal();
+						ot->beh.factory = 0;
+						ot->beh.factories.RemoveIndex(0);
+					}
+					// Only remove the opAssign method if the script hasn't provided one
+					if( ot->beh.copy == engine->scriptTypeBehaviours.beh.copy )
+					{
+						engine->scriptFunctions[ot->beh.copy]->ReleaseInternal();
+						ot->beh.copy = 0;
+					}
+				}
+			}
+// ... 2.35 CODE !
+#else
+// 2.38 CODE ...
 			if (!decl->isExistingShared)
 			{
 				// Add the default copy operator if needed (only if no other opAssign with single parameter is defined)
@@ -813,6 +850,8 @@ void asCBuilder::ParseScripts()
 					}
 				}
 			}
+// ... 2.38 CODE !
+#endif
 		}
 	}
 
@@ -1051,6 +1090,22 @@ void asCBuilder::CompileFunctions()
 		{
 			asCScriptNode *node = classDecl ? classDecl->node : 0;
 
+#ifdef URHO3D_AS_PREVIOUS_DEFAULT_CONSTRUCTOR_LOGIC
+// 2.35 CODE ...
+			int r = 0, c = 0;
+			if( node )
+				current->script->ConvertPosToRowCol(node->tokenPos, &r, &c);
+
+			asCString str = func->GetDeclarationStr();
+			str.Format(TXT_COMPILING_s, str.AddressOf());
+			WriteInfo(current->script->name, str, r, c, true);
+
+			// This is the default constructor that is generated
+			// automatically if not implemented by the user.
+			compiler.CompileDefaultConstructor(this, current->script, node, func, classDecl);
+// ... 2.35 CODE !
+#else
+// 2.38 CODE ...
 			if (func->parameterTypes.GetLength() == 0)
 			{
 				int r = 0, c = 0;
@@ -1081,7 +1136,8 @@ void asCBuilder::CompileFunctions()
 				// automatically if not implemented by the user.
 				r = compiler.CompileDefaultCopyConstructor(this, current->script, node, func, classDecl);
 			}
-
+// ... 2.38 CODE !
+#endif
 			engine->preMessage.isSet = false;
 		}
 		else

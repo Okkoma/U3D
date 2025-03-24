@@ -28,6 +28,7 @@
    andreas@angelcode.com
 */
 
+// Modified for Urho3D
 
 //
 // angelscript.h
@@ -38,6 +39,11 @@
 
 #ifndef ANGELSCRIPT_H
 #define ANGELSCRIPT_H
+
+// Urho3D: Define AS_MAX_PORTABILITY for Web and MCST Elbrus 2000 platforms
+#if defined(__EMSCRIPTEN__) || defined(__e2k__)
+#define AS_MAX_PORTABILITY
+#endif
 
 #include <stddef.h>
 #ifndef _MSC_VER
