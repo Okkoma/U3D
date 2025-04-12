@@ -23,6 +23,10 @@
 # Set CMake minimum version
 cmake_minimum_required (VERSION 3.10.2)
 
+if(POLICY CMP0177)
+  cmake_policy(SET CMP0177 NEW)
+endif()
+
 # Set project name
 project (Urho3D)
 
