@@ -110,6 +110,7 @@ const StringHash EXTENSION_TYPE_DDS(".dds");
 const StringHash EXTENSION_TYPE_PNG(".png");
 const StringHash EXTENSION_TYPE_JPG(".jpg");
 const StringHash EXTENSION_TYPE_JPEG(".jpeg");
+const StringHash EXTENSION_TYPE_WEBP(".webp");
 const StringHash EXTENSION_TYPE_HDR(".hdr");
 const StringHash EXTENSION_TYPE_BMP(".bmp");
 const StringHash EXTENSION_TYPE_TGA(".tga");
@@ -1193,6 +1194,8 @@ int GetResourceType(StringHash fileType)
         return RESOURCE_TYPE_IMAGE;
     else if(fileType == EXTENSION_TYPE_JPEG)
         return RESOURCE_TYPE_IMAGE;
+    else if(fileType == EXTENSION_TYPE_WEBP)
+        return RESOURCE_TYPE_IMAGE;        
     else if(fileType == EXTENSION_TYPE_HDR)
         return RESOURCE_TYPE_IMAGE;
     else if(fileType == EXTENSION_TYPE_BMP)
@@ -1248,6 +1251,8 @@ bool GetExtensionType(String path, StringHash &out fileType)
         fileType = EXTENSION_TYPE_JPG;
     else if(type == EXTENSION_TYPE_JPEG)
         fileType = EXTENSION_TYPE_JPEG;
+    else if(type == EXTENSION_TYPE_WEBP)
+        fileType = EXTENSION_TYPE_WEBP;        
     else if(type == EXTENSION_TYPE_HDR)
         fileType =  EXTENSION_TYPE_HDR;
     else if(type == EXTENSION_TYPE_BMP)
