@@ -49,7 +49,7 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho3D-ExternalProject-tolua\\+\\+ AND NOT I
 
     # Define dependency libs
     set (LIBS Lua)
-    if (NOT MSVC)
+    if (NOT MSVC AND NOT CMAKE_HOST_WIN32)
         list (APPEND LIBS m)
     endif ()
 

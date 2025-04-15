@@ -48,7 +48,7 @@ endif ()
 # Add dependency target
 set (TARGET_NAME minilua)
 set (SOURCE_FILES minilua.c)
-if (NOT MSVC)
+if (NOT MSVC AND NOT CMAKE_HOST_WIN32 OR MINGW)
     set (LIBS m)
 endif ()
 setup_executable (PRIVATE TOOL NODEPS)

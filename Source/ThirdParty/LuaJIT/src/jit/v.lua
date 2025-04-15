@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------
 -- Verbose mode of the LuaJIT compiler.
 --
--- Copyright (C) 2005-2016 Mike Pall. All rights reserved.
+-- Copyright (C) 2005-2025 Mike Pall. All rights reserved.
 -- Released under the MIT license. See Copyright Notice in luajit.h
 ----------------------------------------------------------------------------
 --
@@ -59,11 +59,10 @@
 
 -- Cache some library functions and objects.
 local jit = require("jit")
-assert(jit.version_num == 20100, "LuaJIT core/library version mismatch")
 local jutil = require("jit.util")
 local vmdef = require("jit.vmdef")
 local funcinfo, traceinfo = jutil.funcinfo, jutil.traceinfo
-local type, format = type, string.format
+local type, sub, format = type, string.sub, string.format
 local stdout, stderr = io.stdout, io.stderr
 
 -- Active flag and output file handle.
@@ -90,7 +89,12 @@ end
 local function fmterr(err, info)
   if type(err) == "number" then
     if type(info) == "function" then info = fmtfunc(info) end
-    err = format(vmdef.traceerr[err], info)
+    local fmt = vmdef.traceerr[err]
+    if fmt == "NYI: bytecode %s" then
+      local oidx = 6 * info
+      info = sub(vmdef.bcnames, oidx+1, oidx+6)
+    end
+    err = format(fmt, info)
   end
   return err
 end
@@ -99,7 +103,7 @@ end
 local function dump_trace(what, tr, func, pc, otr, oex)
   if what == "start" then
     startloc = fmtfunc(func, pc)
-    startex = otr and "("..otr.."/"..oex..") " or ""
+    startex = otr and "("..otr.."/"..(oex == -1 and "stitch" or oex)..") " or ""
   else
     if what == "abort" then
       local loc = fmtfunc(func, pc)

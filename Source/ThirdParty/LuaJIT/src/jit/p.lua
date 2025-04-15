@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------
 -- LuaJIT profiler.
 --
--- Copyright (C) 2005-2016 Mike Pall. All rights reserved.
+-- Copyright (C) 2005-2025 Mike Pall. All rights reserved.
 -- Released under the MIT license. See Copyright Notice in luajit.h
 ----------------------------------------------------------------------------
 --
@@ -41,7 +41,6 @@
 
 -- Cache some library functions and objects.
 local jit = require("jit")
-assert(jit.version_num == 20100, "LuaJIT core/library version mismatch")
 local profile = require("jit.profile")
 local vmdef = require("jit.vmdef")
 local math = math
@@ -120,7 +119,7 @@ end
 -- Show top N list.
 local function prof_top(count1, count2, samples, indent)
   local t, n = {}, 0
-  for k, v in pairs(count1) do
+  for k in pairs(count1) do
     n = n + 1
     t[n] = k
   end
@@ -156,6 +155,7 @@ local function prof_annotate(count1, samples)
     ms = math.max(ms, v)
     if pct >= prof_min then
       local file, line = k:match("^(.*):(%d+)$")
+      if not file then file = k; line = 0 end
       local fl = files[file]
       if not fl then fl = {}; files[file] = fl; files[#files+1] = file end
       line = tonumber(line)
@@ -227,9 +227,7 @@ local function prof_finish()
     local samples = prof_samples
     if samples == 0 then
       if prof_raw ~= true then out:write("[No samples collected]\n") end
-      return
-    end
-    if prof_ann then
+    elseif prof_ann then
       prof_annotate(prof_count1, samples)
     else
       prof_top(prof_count1, prof_count2, samples, "")
@@ -237,6 +235,7 @@ local function prof_finish()
     prof_count1 = nil
     prof_count2 = nil
     prof_ud = nil
+    if out ~= stdout then out:close() end
   end
 end
 

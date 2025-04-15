@@ -1,5 +1,6 @@
 #
 # Copyright (c) 2008-2022 the Urho3D project.
+# Copyright (c) 2022-2025 the U3D project.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -235,8 +236,12 @@ if (NOT LUAJIT_CACHE STREQUAL "${URHO3D_64BIT}-${LUAJIT_DISABLE_FFI}-${LUAJIT_DI
         set (TARGET_SYS iOS)
     elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
         set (TARGET_SYS Linux)
-    elseif (MINGW)
-        set (TARGET_SYS Windows)
+    elseif (MINGW)        
+        if (ANDROID) # building android with MINGW on windows, we need to force the target system to Linux
+            set (TARGET_SYS Linux)
+        else ()
+            set (TARGET_SYS Windows)
+        endif ()
     elseif (NOT TARGET_SYS)
         set (TARGET_SYS ${HOST_SYS})
     endif ()
@@ -298,7 +303,12 @@ if (NOT LUAJIT_CACHE STREQUAL "${URHO3D_64BIT}-${LUAJIT_DISABLE_FFI}-${LUAJIT_DI
     endif ()
     if (TARGET_LJARCH STREQUAL x64)
         find_string ("LJ_FR2 (1)" TWO_SLOT_FRAME)
-        if (NOT TWO_SLOT_FRAME)
+        # We are an issue here:
+        # this condition is from the original luajit makefile so only applies to unix/linux build. (see https://luajit.org/install.html)
+        # but not for msvc (see original msvcbuild.bat), so exclude MSVC.
+        # Another requirement for x64 is to force LJ_FR2 when using GC64
+        # for this, refer to discussion https://github.com/LuaJIT/LuaJIT/issues/25
+        if (NOT TWO_SLOT_FRAME AND NOT MSVC AND NOT LUAJIT_ENABLE_GC64)
             set (DASM_ARCH x86)
         endif ()
     elseif (TARGET_LJARCH STREQUAL arm)
@@ -427,7 +437,7 @@ else ()
     endif ()
 endif ()
 set (LJLIB_C src/lib_base.c src/lib_math.c src/lib_bit.c src/lib_string.c src/lib_table.c
-    src/lib_io.c src/lib_os.c src/lib_package.c src/lib_debug.c src/lib_jit.c src/lib_ffi.c)
+    src/lib_io.c src/lib_os.c src/lib_package.c src/lib_debug.c src/lib_jit.c src/lib_ffi.c src/lib_buffer.c)
 generate_source (${LJVM_BOUT} ${LJVM_MODE})
 foreach (MODE bcdef ffdef libdef recdef)
     generate_source (lj_${MODE}.h ${MODE} ${LJLIB_C})
@@ -439,10 +449,10 @@ generate_source (lj_folddef.h folddef src/lj_opt_fold.c)
 if (URHO3D_LUAJIT_AMALG)
     set (LJCORE_C src/ljamalg.c)
 else ()
-    set (LJCORE_C src/lj_gc.c src/lj_err.c src/lj_char.c src/lj_bc.c src/lj_obj.c src/lj_buf.c
+    set (LJCORE_C src_lj_assert.c src/lj_gc.c src/lj_err.c src/lj_char.c src/lj_bc.c src/lj_obj.c src/lj_buf.c
         src/lj_str.c src/lj_tab.c src/lj_func.c src/lj_udata.c src/lj_meta.c src/lj_debug.c
-        src/lj_state.c src/lj_dispatch.c src/lj_vmevent.c src/lj_vmmath.c src/lj_strscan.c
-        src/lj_strfmt.c src/lj_strfmt_num.c src/lj_api.c src/lj_profile.c
+        src/lj_prng.c src/lj_state.c src/lj_dispatch.c src/lj_vmevent.c src/lj_vmmath.c src/lj_strscan.c
+        src/lj_strfmt.c src/lj_strfmt_num.c src/lj_serialize.c src/lj_api.c src/lj_profile.c
         src/lj_lex.c src/lj_parse.c src/lj_bcread.c src/lj_bcwrite.c src/lj_load.c
         src/lj_ir.c src/lj_opt_mem.c src/lj_opt_fold.c src/lj_opt_narrow.c
         src/lj_opt_dce.c src/lj_opt_loop.c src/lj_opt_split.c src/lj_opt_sink.c
@@ -581,7 +591,7 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho3D-ExternalProject-LuaJIT AND NOT IOS AN
     if (NOT TARGET LuaJIT_universal)
         set (LIBS LuaJIT)
     endif ()
-    if (NOT MSVC)
+    if (NOT MSVC AND NOT CMAKE_HOST_WIN32 OR MINGW)
         list (APPEND LIBS m)
     endif ()
 

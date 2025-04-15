@@ -63,7 +63,7 @@ define_source_files (EXTRA_CPP_FILES tolua.c toluabind.c)
 
 # Define dependency libs
 set (LIBS toluapp Lua)
-if (NOT MSVC)
+if (NOT MSVC AND NOT CMAKE_HOST_WIN32)
     list (APPEND LIBS m)
 endif ()
 set (INCLUDE_DIRS ../../include ../../../../ThirdParty/Lua/src)
