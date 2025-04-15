@@ -21,6 +21,10 @@
 # THE SOFTWARE.
 #
 
+if (POLICY CMP0127) # https://cmake.org/cmake/help/latest/policy/CMP0127.html
+    cmake_policy (SET CMP0127 NEW)
+endif ()
+
 set (URHOCOMMON_INUSE TRUE)
 
 # This ensures compatibility with older versions of Urho3D's CMake files.
