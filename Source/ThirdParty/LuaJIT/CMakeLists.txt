@@ -234,14 +234,10 @@ if (NOT LUAJIT_CACHE STREQUAL "${URHO3D_64BIT}-${LUAJIT_DISABLE_FFI}-${LUAJIT_DI
     # Makefile: Target system detection
     if (IOS OR TVOS)
         set (TARGET_SYS iOS)
-    elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
+    elseif (CMAKE_SYSTEM_NAME STREQUAL Linux OR ANDROID) # we need to force the target system to Linux when building android
         set (TARGET_SYS Linux)
     elseif (MINGW)        
-        if (ANDROID) # building android with MINGW on windows, we need to force the target system to Linux
-            set (TARGET_SYS Linux)
-        else ()
-            set (TARGET_SYS Windows)
-        endif ()
+        set (TARGET_SYS Windows)
     elseif (NOT TARGET_SYS)
         set (TARGET_SYS ${HOST_SYS})
     endif ()
