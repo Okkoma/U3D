@@ -200,8 +200,8 @@ bool LoadScene(const String&in fileName)
 
     // Add the scene's resource path in case it's necessary
     String newScenePath = GetPath(fileName);
-    if (!rememberResourcePath || !sceneResourcePath.StartsWith(newScenePath, false))
-        SetResourcePath(newScenePath);
+    if (!sceneResourcePath.StartsWith(newScenePath, false))
+        SetResourcePath(newScenePath, true, rememberResourcePath);
 
     suppressSceneChanges = true;
     sceneModified = false;
